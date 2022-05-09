@@ -11,11 +11,13 @@ class CollectionSerializer(serializers.ModelSerializer):
         model = Collection
         fields = ['id', 'title', 'products_count']
 
-    products_count = serializers.SerializerMethodField(
-        method_name='calculate_products_count')
+    products_count = serializers.IntegerField()
 
-    def calculate_products_count(self, collection: Collection):
-        return Product.objects.filter(collection=collection).count()
+    # products_count = serializers.SerializerMethodField(
+    #     method_name='calculate_products_count')
+
+    # def calculate_products_count(self, collection: Collection):
+    #     return Product.objects.filter(collection=collection).count()
 
 
 class ProductSerializer(serializers.ModelSerializer):
