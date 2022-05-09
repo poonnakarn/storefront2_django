@@ -1,10 +1,9 @@
-from .models import OrderItem, Product, Collection
-from .serializers import CollectionSerializer, ProductSerializer
+from .models import OrderItem, Product, Collection, Review
+from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer
 from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
 
 
 class ProductViewSet(ModelViewSet):
@@ -20,7 +19,7 @@ class ProductViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
-class CollectionViewSet(ReadOnlyModelViewSet):
+class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.all().annotate(products_count=Count('products'))
     serializer_class = CollectionSerializer
 
@@ -28,3 +27,8 @@ class CollectionViewSet(ReadOnlyModelViewSet):
         if Product.objects.filter(collection_id=kwargs['pk']).count() > 0:
             return Response({'error': 'Non-empty collection cannot be deleted'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
+
+
+class ReviewViewSet(ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
