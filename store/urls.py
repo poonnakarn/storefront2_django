@@ -1,5 +1,3 @@
-from email.mime import base
-from django.urls import include, path
 from rest_framework_nested import routers
 from . import views
 
@@ -11,10 +9,13 @@ router.register('collections', views.CollectionViewSet)
 router.register('carts', views.CartViewSet, basename='carts')
 
 # Nested router
-product_router = routers.NestedDefaultRouter(
+products_router = routers.NestedDefaultRouter(
     router, 'products', lookup='product')  # Have product_id params in url
-product_router.register('reviews', views.ReviewViewSet,
-                        basename='product-reviews')
+products_router.register('reviews', views.ReviewViewSet,
+                         basename='product-reviews')
+# Nested router
+carts_router = routers.NestedDefaultRouter(router, 'carts', lookup='cart')
+carts_router.register('items', views.CartItemViewSet, basename='cart-items')
 
 # URLConf
-urlpatterns = router.urls + product_router.urls
+urlpatterns = router.urls + products_router.urls + carts_router.urls
